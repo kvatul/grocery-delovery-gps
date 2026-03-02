@@ -27,7 +27,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const role = session?.user?.role; // token.role;
+  const role = session.user?.role; // token.role;
   if (pathname.startsWith("/user") && role !== "user") {
     return NextResponse.redirect(new URL("/unauthorised", req.url));
   }
