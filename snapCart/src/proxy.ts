@@ -5,8 +5,6 @@ export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   //console.log(pathname);
 
-  return NextResponse.next();
-
   const publicRoutes = [
     "/login",
     "/register",
@@ -19,6 +17,8 @@ export async function proxy(req: NextRequest) {
   }
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
   //console.log(token);
+  return NextResponse.next();
+
   if (!token) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", req.url);
