@@ -19,6 +19,7 @@ export async function proxy(req: NextRequest) {
   //console.log(token);
   return NextResponse.next();
 
+  /*
   if (!token) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", req.url);
@@ -37,7 +38,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/unauthorised", req.url));
   }
 
-  return NextResponse.next();
+  return NextResponse.next();*/
 }
 
 export const config = {
