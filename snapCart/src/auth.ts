@@ -23,7 +23,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const password = credentials.password as string;
           let user = await User.findOne({ email });
           if (!user) throw new Error("User does not exist");
-          const isMatch = bcrypt.compare(password, user.password);
+          const isMatch = await bcrypt.compare(password, user.password);
           if (!isMatch) throw new Error("Password does not match");
           return {
             id: user._id,
