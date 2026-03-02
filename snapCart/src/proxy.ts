@@ -1,7 +1,7 @@
-import { getToken } from "next-auth/jwt";
+//import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "./auth";
 export async function proxy(req: NextRequest) {
-  //console.log("middleware is accessesed");
   const { pathname } = req.nextUrl;
   //console.log(pathname);
 
@@ -15,18 +15,19 @@ export async function proxy(req: NextRequest) {
   if (publicRoutes.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-  //console.log(token);
-  return NextResponse.next();
+  //const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  // upto next-auth 4.0 we use getToken but in new version 5.0 we use session from auth
+  const session = await auth();
+  //  return NextResponse.next();
 
-  /*
-  if (!token) {
+  //if (!token) {
+  if (!session) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", req.url);
     return NextResponse.redirect(loginUrl);
   }
 
-  const role = token.role;
+  const role = session?.user?.role; // token.role;
   if (pathname.startsWith("/user") && role !== "user") {
     return NextResponse.redirect(new URL("/unauthorised", req.url));
   }
@@ -38,7 +39,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/unauthorised", req.url));
   }
 
-  return NextResponse.next();*/
+  return NextResponse.next();
 }
 
 export const config = {
