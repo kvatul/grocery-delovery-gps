@@ -15,7 +15,7 @@ const socketIo = new Server(server, {
 });
 
 socketIo.on("connection", (socket) => {
-  //console.log("user connected", socket.id);
+  console.log("user connected", socket.id);
   //socket.on("identity", (userId) => console.log(userId));
   socket.on("identity", async (userId) => {
     await axios.post(`${process.env.NEXT_BASE_URL}/api/socket/connect`, {
