@@ -18,11 +18,15 @@ socketIo.on("connection", (socket) => {
   console.log("user connected", socket.id);
   //socket.on("identity", (userId) => console.log(userId));
   socket.on("identity", async (userId) => {
-    await axios.post(`${process.env.NEXT_BASE_URL}/api/socket/connect`, {
-      userId,
-      socketId: socket.id,
-    });
-    console.log(userId);
+    try {
+      await axios.post(`${process.env.NEXT_BASE_URL}/api/socket/connect`, {
+        userId,
+        socketId: socket.id,
+      });
+      console.log(userId);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   socket.on("update-location", async ({ userId, latitude, longitude }) => {
@@ -69,6 +73,10 @@ app.post("/notify", (req, res) => {
     socketIo.emit(event, data);
   }
   return res.status(200).json({ success: true });
+});
+
+app.get("/", (req, res) => {
+  res.json({ status: "Socket server running" });
 });
 
 server.listen(port, () => {
