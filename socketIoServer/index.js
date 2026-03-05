@@ -73,7 +73,7 @@ socketIo.on("connection", (socket) => {
 
 app.post("/notify", (req, res) => {
   const { event, data, socketId } = req.body;
-  // console.log("event, data,socketId:", event, data, socketId);
+  console.log("event, data,socketId:", event, data, socketId);
   if (socketId) {
     socketIo.to(socketId).emit(event, data);
   } else {

@@ -6,7 +6,7 @@ export const getSocket = () => {
   if (!socket) {
     //socket = io("http://localhost:4000"); //process.env.NEXT_SOCKET_URL
     // socket = io(process.env.NEXT_SOCKET_URL); //process.env.NEXT_SOCKET_URL
-    const socket = io("https://socketioserver-at8m.onrender.com", {
+    socket = io("https://socketioserver-at8m.onrender.com", {
       transports: ["websocket"],
     });
 
