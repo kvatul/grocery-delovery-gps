@@ -10,8 +10,15 @@ dotenv.config();
 const port = process.env.PORT || 5000;
 const server = http.createServer(app);
 
-const socketIo = new Server(server, {
+/* const socketIo = new Server(server, {
   cors: { origin: process.env.NEXT_BASE_URL },
+});
+ */
+const socketIo = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
 
 socketIo.on("connection", (socket) => {
