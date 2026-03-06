@@ -46,6 +46,7 @@ const DeliveryManDashBoard = () => {
       const result = await axios.get("/api/delivery/current-order");
       //console.log(result);
       if (result.data.active) {
+        setShowOtpBox(false);
         setActiveOrder(result.data.assignment);
         setUserLocation({
           latitude: result.data.assignment.order.address.latitude,
@@ -127,7 +128,7 @@ const DeliveryManDashBoard = () => {
         orderId: activeOrder.order._id,
       });
       console.log(result.data);
-      setShowOtpBox(false);
+      setShowOtpBox(true);
     } catch (error) {
       console.log(error);
     } finally {
