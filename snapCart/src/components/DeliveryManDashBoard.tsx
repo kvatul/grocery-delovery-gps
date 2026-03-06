@@ -47,6 +47,7 @@ const DeliveryManDashBoard = () => {
       //console.log(result);
       if (result.data.active) {
         setShowOtpBox(false);
+        setOtp("");
         setActiveOrder(result.data.assignment);
         setUserLocation({
           latitude: result.data.assignment.order.address.latitude,
