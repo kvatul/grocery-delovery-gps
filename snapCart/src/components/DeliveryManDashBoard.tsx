@@ -127,7 +127,7 @@ const DeliveryManDashBoard = () => {
         orderId: activeOrder.order._id,
       });
       console.log(result.data);
-      setShowOtpBox(true);
+      setShowOtpBox(false);
     } catch (error) {
       console.log(error);
     } finally {
