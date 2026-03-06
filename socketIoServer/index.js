@@ -22,7 +22,7 @@ const socketIo = new Server(server, {
 });
 
 socketIo.on("connection", (socket) => {
-  console.log("user connected", socket.id);
+  // console.log("user connected", socket.id);
   ///socket.on("identity", (userId) => console.log(userId));
   socket.on("identity", async (userId) => {
     try {
@@ -53,7 +53,7 @@ socketIo.on("connection", (socket) => {
   });
 
   socket.on("join-chatroom", (orderId) => {
-    console.log("join-chatroom", orderId);
+    //console.log("join-chatroom", orderId);
     socket.join(orderId);
   });
 
@@ -73,7 +73,7 @@ socketIo.on("connection", (socket) => {
 
 app.post("/notify", (req, res) => {
   const { event, data, socketId } = req.body;
-  console.log("event, data,socketId:", event, data, socketId);
+  //console.log("event, data,socketId:", event, data, socketId);
   if (socketId) {
     socketIo.to(socketId).emit(event, data);
   } else {
