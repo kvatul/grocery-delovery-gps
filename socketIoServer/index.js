@@ -82,8 +82,9 @@ app.post("/notify", (req, res) => {
   return res.status(200).json({ success: true });
 });
 
+// Health Route Check
 app.get("/", (req, res) => {
-  res.json({ status: "Socket server running" });
+  res.json({ status: "Socket server running", time: new Date() });
 });
 
 server.listen(port, () => {
