@@ -6,9 +6,8 @@ export default async function emitEventHandler(
   socketId?: string,
 ) {
   try {
-    console.log(`${process.env.NEXT_PUBLIC_SOCKET_URL}/notify`);
+    //console.log(`${process.env.NEXT_PUBLIC_SOCKET_URL}/notify`);
     axios.post(`${process.env.NEXT_PUBLIC_SOCKET_URL}/notify`, {
-      //axios.post("https://socketioserver-at8m.onrender.com/notify", {
       socketId,
       event,
       data,
