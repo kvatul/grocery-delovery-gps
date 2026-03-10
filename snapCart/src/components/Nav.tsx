@@ -102,7 +102,7 @@ const Nav = ({ user }: { user: Iuser }) => {
                 Add Groceries
               </Link>
               <Link
-                href="/"
+                href="/admin/view-grocery"
                 className=" text-sm font-semibold bg-white text-green-600 rounded-full py-2 px-3 flex gap-2 items-center justify-center 
               shadow-lg shadow-black/70 hover:scale-105 hover:bg-green-100 transition-transform "
               >
@@ -187,7 +187,7 @@ const Nav = ({ user }: { user: Iuser }) => {
                 Add Groceries
               </Link>
               <Link
-                href="/"
+                href="/admin/view-grocery"
                 className=" text-sm font-semibold bg-white text-green-600 rounded-full py-2 px-3 flex gap-2 items-center justify-center 
               shadow-lg shadow-black/70 hover:scale-105 hover:bg-green-100 transition-transform "
               >

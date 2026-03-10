@@ -56,11 +56,13 @@ const AddGrocery = () => {
       formData.append("category", category);
       formData.append("unit", unit);
       formData.append("price", price);
+      formData.append("id", "");
+
       console.log(formData);
 
       if (backendImage) formData.append("image", backendImage);
 
-      const result = await axios.post("/api/admin/addgrocery", formData);
+      const result = await axios.post("/api/admin/grocery", formData);
       setLoading(false);
       //router.push("/login");
       console.log(result);

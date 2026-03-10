@@ -1,6 +1,6 @@
 import { Schema, model, models } from "mongoose";
 
-interface Igrocery {
+export interface Igrocery {
   _id?: Schema.Types.ObjectId;
   name: string;
   category: string;
