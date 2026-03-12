@@ -116,7 +116,6 @@ const UserOrderCard = ({ order, role }: { order: IOrder; role: string }) => {
           </div>
           {role === "admin" && orderStatus != "delivered" ? (
             <div className="flex justify-center">
-              <p>{orderStatus}</p>
               <select
                 id="catg"
                 value={orderStatus}

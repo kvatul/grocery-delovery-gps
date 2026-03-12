@@ -3,15 +3,17 @@ import { Igrocery } from "@/model/grocery.model";
 import axios from "axios";
 import { ArrowLeft, Package, Pencil, Search, Upload, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 function page() {
   const [groceries, setGroceries] = useState<Igrocery[]>([]);
+  const [filterGroceries, setFilterGroceries] = useState<Igrocery[]>([]);
   const [editProd, setEditProd] = useState<Igrocery | null>(null);
   const [imagePreview, setImagePreview] = useState("");
   const [backendImage, setBackendImage] = useState<Blob | null>();
-  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const categories = [
     "Fruits & Vegetables",
     "Dairy & Eggs",
@@ -32,12 +34,13 @@ function page() {
       try {
         const result = await axios.get("/api/admin/grocery");
         setGroceries(result.data);
+        setFilterGroceries(result.data);
       } catch (error) {
         console.log(error);
       }
     }
     getGrocery();
-  }, []);
+  }, [query]); //, [query]
 
   useEffect(() => {
     if (editProd) setImagePreview(editProd.image!);
@@ -94,6 +97,18 @@ function page() {
     }
   }
 
+  // function handleSearch(e: React.FormEvent) {
+  //   e.preventDefault();
+  function handleSearch() {
+    setFilterGroceries(
+      groceries.filter(
+        (g) =>
+          g.name.toLowerCase().includes(query.toLowerCase()) ||
+          g.category.toLowerCase().includes(query.toLowerCase()),
+      ),
+    );
+  }
+
   return (
     <div className="pt-4 pb-20 w-[90%] md:w-[80%] mx-auto">
       <motion.div
@@ -124,16 +139,22 @@ function page() {
         className="flex items-center bg-white border border-gray-200 rounded-full px-5 py-3 shadow-s
               mb-10 hover:shadow-lg transition-all max-w-1g mx-auto w-full"
       >
-        <Search className="text-gray-500 w-5 h-5 mr-2" />
+        <span title="Click me to Search" onClick={handleSearch}>
+          <Search className="text-gray-500 w-5 h-5 mr-2" />
+        </span>
         <input
           type="text"
           className="w-full outline-none text-gray-700 placeholder-gray-400"
           placeholder="Search by name or category..."
+          value={query}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setQuery(e.target.value)
+          }
         />
       </motion.form>
 
       <div className="space-y-4">
-        {groceries?.map((g, i) => (
+        {filterGroceries?.map((g, i) => (
           <motion.div
             key={i}
             whileHover={{ scale: 1.01 }}
@@ -298,6 +319,7 @@ function page() {
                   className="px-4 py-2 rounded-lg bg-green-600 text-white flex items-center gap-2
                            hover:scale-105 transition-all duration-200"
                   onClick={updateProduct}
+                  disabled={loading}
                 >
                   Update Grocery
                 </button>
@@ -305,6 +327,7 @@ function page() {
                   className="px-4 py-2 rounded-lg bg-red-600 text-white flex items-center gap-2 
                   hover:scale-105 transition-all duration-200 "
                   onClick={deleteProduct}
+                  disabled={loading}
                 >
                   Delete Grocery
                 </button>

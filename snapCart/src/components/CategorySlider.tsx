@@ -15,6 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 
 const CategorySlider = () => {
   const categories = [
@@ -31,8 +32,9 @@ const CategorySlider = () => {
   ];
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
-
+  const [catId, setCatId] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
     const scrollAmount = direction == "left" ? -300 : 300;
@@ -40,10 +42,8 @@ const CategorySlider = () => {
   };
 
   const checkScroll = () => {
-    //alert("1");
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    //alert("1");
     setShowLeft(scrollLeft > 0);
     setShowRight(scrollLeft + clientWidth < scrollWidth - 5);
   };
@@ -63,6 +63,16 @@ const CategorySlider = () => {
     }, 2000);
     return () => clearInterval(interval);
   });
+
+  useEffect(() => {
+    if (catId)
+      router.push(`/?c=${encodeURIComponent(categories[catId - 1].name)}`);
+    else router.push("/");
+  }, [catId]);
+
+  function handleSearch(id: number) {
+    alert(catId - 1);
+  }
 
   return (
     <motion.div
@@ -97,7 +107,10 @@ const CategorySlider = () => {
               key={catg.id}
               className={` min-w-[130px] md:min-w-[160px]  flex flex-col 
                 justify-center gap-3 items-center rounded-2xl  transition-all shadow-md hover:shadow-xl
-                cursor-pointer ${catg.color} }`}
+                cursor-pointer ${catg.color} ${catId == catg.id ? "border-2" : ""} `}
+              onClick={() =>
+                setCatId((prev) => (prev == catg.id ? 0 : catg.id))
+              }
             >
               <div className={`flex flex-col justify-center items-center p-4 `}>
                 <Icon className=" h-5 w-5 text-green-700 mb-3" />

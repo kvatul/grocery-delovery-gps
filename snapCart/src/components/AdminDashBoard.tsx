@@ -1,5 +1,5 @@
 import connectDb from "@/lib/db";
-import Grocery from "@/model/grocery.model";
+
 import Order from "@/model/order.model";
 import User from "@/model/user.model";
 import AdminDashBoardClient from "./AdminDashBoardClient";
@@ -7,7 +7,6 @@ const AdminDashBoard = async () => {
   await connectDb();
   const order = await Order.find({});
   const user = await User.find({ role: "user" });
-  const groceries = await Grocery.find({});
   const totalOrder = order.length;
   const totalCustomer = user.length;
   const pendingOrder = order.filter((ord) => ord.status === "pending").length;
@@ -55,7 +54,9 @@ const AdminDashBoard = async () => {
     nextDate.setDate(nextDate.getDate() + 1);
 
     const orderCount = order.filter(
-      (ord) => ord.createdAt >= currDate && ord.createdAt <= nextDate,
+      (ord) =>
+        new Date(ord.createdAt) >= currDate &&
+        new Date(ord.createdAt) <= nextDate,
     ).length;
     chartData.push({
       day: currDate

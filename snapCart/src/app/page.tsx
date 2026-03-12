@@ -9,8 +9,11 @@ import UserDashBoard from "@/components/UserDashBoard";
 import DeliveryMan from "@/components/DeliveryMan";
 import GeoUpdater from "@/components/GeoUpdater";
 import InitUser from "@/InitUser";
+import Grocery, { Igrocery } from "@/model/grocery.model";
 
-export default async function Home() {
+export default async function Home(props: {
+  searchParams: Promise<{ q: string; c: string }>;
+}) {
   await connectDb();
   const session = await auth();
   //console.log(session);
@@ -20,6 +23,21 @@ export default async function Home() {
   if (!user.role || !user.mobile || (user.role == "user" && !user.mobile))
     return <EditRoleMobile />;
 
+  const searchParams = await props.searchParams;
+  //console.log(searchParams);
+  let groceryList: Igrocery[] = [];
+  if (user.role === "user") {
+    if (searchParams.c) {
+      groceryList = await Grocery.find({ category: searchParams?.c });
+    } else if (searchParams.q) {
+      groceryList = await Grocery.find({
+        $or: [
+          { name: { $regex: searchParams?.q || "", $options: "i" } },
+          { category: { $regex: searchParams?.q || "", $options: "i" } },
+        ],
+      });
+    } else groceryList = await Grocery.find({});
+  }
   const plainUser = JSON.parse(JSON.stringify(user));
   //console.log(plainUser);
   return (
@@ -40,7 +58,7 @@ export default async function Home() {
       {user.role == "admin" ? (
         <AdminDashBoard />
       ) : user.role == "user" ? (
-        <UserDashBoard />
+        <UserDashBoard groceries={groceryList} />
       ) : (
         <DeliveryMan />
       )}

@@ -89,8 +89,21 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    /*
+    const { searchParams } = new URL(req.url);
+    console.log(searchParams);
+    const query = searchParams.get("q");
+    console.log(query);
+    let searchQuery: any = {};
+    if (!query) {
+      searchQuery.$or = [
+        { name: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+      ];
+    } */
+
     await connectDb();
-    const groceries = await Grocery.find({});
+    const groceries = await Grocery.find({}); //({ searchQuery });
     return NextResponse.json(groceries, { status: 201 });
   } catch (error) {
     console.log(`error while getting grocery ${error} `);

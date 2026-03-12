@@ -19,6 +19,7 @@ import { signOut } from "next-auth/react";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
 interface Iuser {
   id: string;
   name?: string;
@@ -34,19 +35,30 @@ const Nav = ({ user }: { user: Iuser }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const profileDropDown = useRef<HTMLDivElement>(null);
   const { cartData } = useSelector((state: RootState) => state.cart);
-  const { userData } = useSelector((state: RootState) => state.user);
+  //const { userData } = useSelector((state: RootState) => state.user);
+  const [search, setSearch] = useState<string>("");
+  const router = useRouter();
+
   useEffect(() => {
     function handledClickOutside(e: MouseEvent) {
       if (
         profileDropDown.current &&
         !profileDropDown.current.contains(e.target as Node)
-      )
+      ) {
         setOpen(false);
+        //alert("called");
+      }
     }
 
     document.addEventListener("mousedown", handledClickOutside);
     return () => document.removeEventListener("mousedown", handledClickOutside);
   }, [profileDropDown]);
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (search) router.push(`/?q=${encodeURIComponent(search.trim())}`);
+    else router.push("/");
+  }
 
   const Sidebar = sidebarOpen
     ? createPortal(
@@ -145,12 +157,17 @@ const Nav = ({ user }: { user: Iuser }) => {
       </Link>
 
       {user.role == "user" && (
-        <form className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg shadow-md">
+        <form
+          className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg shadow-md"
+          onSubmit={handleSearch}
+        >
           <Search className="text-gray-500 w-5 h-5 mr-2" />
           <input
             placeholder="Search groceries ..."
             className="w-full text-gray-700 outline-none placeholder-gray-300 "
             type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </form>
       )}
@@ -237,103 +254,104 @@ const Nav = ({ user }: { user: Iuser }) => {
             ) : (
               <CircleUserRound />
             )}
-
-            <AnimatePresence>
-              {open && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.9 }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    transition: { duration: 1 },
-                  }}
-                  exit={{ opacity: 0, y: -10, scale: 0.9 }}
-                  className="absolute bg-white border border-gray-200 rounded-2xl shadow-md w-50 mt-3 top-8 right-0 p-3 z-999  "
-                >
-                  <div className="flex items-center gap-5 border-gray-200 px-3 py-3">
-                    <div
-                      className="bg-green-100 rounded-full h-10 w-10 flex items-center justify-center 
+          </div>
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { duration: 1 },
+                }}
+                exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                className="absolute bg-white border border-gray-200 rounded-2xl shadow-md w-50 mt-3 top-8 right-0 p-3 z-999  "
+              >
+                <div className="flex items-center gap-5 border-gray-200 px-3 py-3">
+                  <div
+                    className="bg-green-100 rounded-full h-10 w-10 flex items-center justify-center 
                     shadow-md over-flow-hidden relative"
-                    >
-                      {user?.image ? (
-                        <Image
-                          alt="user"
-                          src={user?.image}
-                          fill
-                          className="object-cover rounded-full"
-                        />
-                      ) : (
-                        <CircleUserRound />
-                      )}
+                  >
+                    {user?.image ? (
+                      <Image
+                        alt="user"
+                        src={user?.image}
+                        fill
+                        className="object-cover rounded-full"
+                      />
+                    ) : (
+                      <CircleUserRound />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-gray-800 font-semibold ">
+                      {user?.name}
                     </div>
-                    <div>
-                      <div className="text-gray-800 font-semibold ">
-                        {user?.name}
-                      </div>
-                      <div className="text-gray-400 -mt-2 text-[12px] capitalize ">
-                        {user.role}
-                      </div>
+                    <div className="text-gray-400 -mt-2 text-[12px] capitalize ">
+                      {user.role}
                     </div>
                   </div>
-                  {user.role == "user" && (
-                    <Link
-                      href="/user/myorder"
-                      className="flex items-center gap-2 px-3 py-3 text-gray-700 hover:bg-green-50 rounded-lg
+                </div>
+                {user.role == "user" && (
+                  <Link
+                    href="/user/myorder"
+                    className="flex items-center gap-2 px-3 py-3 text-gray-700 hover:bg-green-50 rounded-lg
                    font-medium  "
-                      onClick={() => setOpen(false)}
-                    >
-                      <Package className="text-green-500 w-5 h-5 " />
-                      My orders
-                    </Link>
-                  )}
-                  <button
-                    className="flex items-center gap-2 px-3 py-3 text-gray-700 w-full hover:bg-red-50 rounded-lg
+                    onClick={() => setOpen(false)}
+                  >
+                    <Package className="text-green-500 w-5 h-5 " />
+                    My orders
+                  </Link>
+                )}
+                <button
+                  className="flex items-center gap-2 px-3 py-3 text-gray-700 w-full hover:bg-red-50 rounded-lg
                    font-medium"
-                    onClick={() => {
-                      setOpen(false);
-                      signOut({ callbackUrl: "/login" });
-                    }}
-                  >
-                    <LogOut className="w-5 h-5 text-red-500" />
-                    Logout
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {searchOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.9 }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    transition: { duration: 1 },
+                  onClick={() => {
+                    setOpen(false);
+                    signOut({ callbackUrl: "/login" });
                   }}
-                  exit={{ opacity: 0, y: -10, scale: 0.9 }}
-                  className="fixed top-24 w-[90%] left-1/2 -translate-x-1/2 border border-green-200  bg-white rounded-full z-40 flex items-center
-                  shadow-lg px-2 py-2 "
                 >
-                  <Search className="w-5 h-5 text-gray-500 mr-2" />
-                  <form action="" className="grow">
-                    <input
-                      type="text"
-                      placeholder="Search groceries.."
-                      className="  text-gray-500  placeholder-gray-300 px-1 outline-none "
-                    />
-                  </form>
-                  <button
-                    className="w-5 h-5 text-red-500 -mt-1"
-                    onClick={() => setSearchOpen(false)}
-                  >
-                    <X className="h-5 w-5 text-red-700" />
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                  <LogOut className="w-5 h-5 text-red-500" />
+                  Logout
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {searchOpen && (
+              <motion.div
+                layout="position"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 1 },
+                }}
+                exit={{ opacity: 0, y: -10 }}
+                className="fixed top-24 w-[90%] left-0 right-0 mx-auto border border-green-200 
+                           bg-white rounded-full z-40 flex items-center shadow-lg px-2 py-2 md:hidden "
+              >
+                <Search className="w-5 h-5 text-gray-500 mr-2" />
+                <form action="" className="grow" onSubmit={handleSearch}>
+                  <input
+                    type="text"
+                    placeholder="Search groceries.."
+                    className=" w-full text-gray-500  placeholder-gray-300 px-1 outline-none "
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </form>
+                <button
+                  className="flex items-center justify-center w-5 h-5"
+                  onClick={() => setSearchOpen(false)}
+                >
+                  <X className="h-5 w-5 text-red-700" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         {Sidebar}
       </div>
